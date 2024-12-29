@@ -6,6 +6,7 @@ import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { ButtonText, ButtonIcon, ButtonGroup } from "@/components/ui/button";
 import { LinkText } from "@/components/ui/link";
+import { Fab, FabLabel, FabIcon } from "@/components/ui/fab";
 import { HStack } from "@/components/ui/hstack";
 import { VStack } from "@/components/ui/vstack";
 import MovieCard from "@/components/MovieCard";
@@ -24,7 +25,7 @@ import {
   getPopularMovies,
   getUpcomingMovies,
 } from "@/apis/Movies";
-import { ChevronRightIcon, ChevronLeftIcon, Icon } from "@/components/ui/icon";
+import { ChevronRightIcon, ChevronLeftIcon, Icon, StarIcon } from "@/components/ui/icon";
 // import { ChevronRightIcon } from "@/components/ui/icon/index.web";
 
 export default function Home() {
@@ -33,7 +34,19 @@ export default function Home() {
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
   const [MovieResponse, setMovieResponse] = useState<MovieResponse>();
+  const [NewMovieResponse, setNewMovieResponse] = useState<MovieResponse>();
+  const [PopularMovieResponse, setPopularMovieResponse] =
+    useState<MovieResponse>();
+  const [UpcomingMovieResponse, setUpcomingMovieResponse] =
+    useState<MovieResponse>();
   const [page, setPage] = useState(1);
+  const [popularPage, setPopularPage] = useState(1);
+  const [upcomingPage, setUpcomingPage] = useState(1);
+  const [newPage, setNewPage] = useState(1);
+
+  const today = new Date();
+  const date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
 
   useEffect(() => {
     getAllMovies(page).then((movies) => {
@@ -43,10 +56,25 @@ export default function Home() {
   }, [page]);
 
   useEffect(() => {
-    getNewMovies(page, "2024-12-29").then((movies) => {
+    getNewMovies(newPage, date).then((movies) => {
+      setNewMovieResponse(movies);
       setNewMovies(movies.results);
     });
-  }, []);
+  }, [newPage, date]);
+
+  useEffect(() => {
+    getPopularMovies(popularPage).then((movies) => {
+      setPopularMovieResponse(movies);
+      setPopularMovies(movies.results);
+    });
+  }, [popularPage]);
+
+  useEffect(() => {
+    getUpcomingMovies(upcomingPage, date).then((movies) => {
+      setUpcomingMovieResponse(movies);
+      setUpcomingMovies(movies.results);
+    });
+  }, [upcomingPage, date]);
 
   return (
     <SafeAreaView className="w-full h-full">
@@ -137,18 +165,37 @@ export default function Home() {
                       movie_votes={movie.vote_count}
                     />
                   ))}
-                  {/* <MovieCard />
-                  <MovieCard />
-                  <MovieCard />
-                  <MovieCard />
-                  <MovieCard /> */}
                 </ScrollView>
               </HStack>
             </VStack>
             <VStack className="w-full">
               <HStack className="w-full justify-between">
                 <Text size="xl">New Movies</Text>
-                <LinkText>View all</LinkText>
+                <Box>
+                  <HStack className="align-center justify-center" space="lg">
+                    <Button
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBlockColor: "black",
+                      }}
+                      onPress={() => setNewPage(newPage - 1)}
+                      disabled={newPage === 1}
+                    >
+                      <Icon as={ChevronLeftIcon} size="xl" />
+                    </Button>
+
+                    <Button
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBlockColor: "black",
+                      }}
+                      onPress={() => setNewPage(newPage + 1)}
+                      disabled={newPage === NewMovieResponse?.total_pages}
+                    >
+                      <Icon as={ChevronRightIcon} size="xl" />
+                    </Button>
+                  </HStack>
+                </Box>
               </HStack>
               <HStack className="w-full overflow-x-scroll">
                 <ScrollView horizontal={true}>
@@ -168,9 +215,120 @@ export default function Home() {
                 </ScrollView>
               </HStack>
             </VStack>
+
+            <VStack className="w-full">
+              <HStack className="w-full justify-between">
+                <Text size="xl">Popular Movies</Text>
+                <Box>
+                  <HStack className="align-center justify-center" space="lg">
+                    <Button
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBlockColor: "black",
+                      }}
+                      onPress={() => setPopularPage(popularPage - 1)}
+                      disabled={popularPage === 1}
+                    >
+                      <Icon as={ChevronLeftIcon} size="xl" />
+                    </Button>
+
+                    <Button
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBlockColor: "black",
+                      }}
+                      onPress={() => setPopularPage(popularPage + 1)}
+                      disabled={
+                        popularPage === PopularMovieResponse?.total_pages
+                      }
+                    >
+                      <Icon as={ChevronRightIcon} size="xl" />
+                    </Button>
+                  </HStack>
+                </Box>
+              </HStack>
+              <HStack className="w-full overflow-x-scroll">
+                <ScrollView horizontal={true}>
+                  {popularMovies.map((movie) => (
+                    <MovieCard
+                      key={movie.id}
+                      movie_id={movie.id}
+                      movie_img={movie.poster_path}
+                      movie_date={movie.release_date}
+                      movie_name={movie.title}
+                      movie_popularity={movie.popularity}
+                      movie_lang={movie.original_language}
+                      movie_rating={movie.vote_average}
+                      movie_votes={movie.vote_count}
+                    />
+                  ))}
+                </ScrollView>
+              </HStack>
+            </VStack>
+
+            <VStack className="w-full">
+              <HStack className="w-full justify-between">
+                <Text size="xl">Upcoming Movies</Text>
+                <Box>
+                  <HStack className="align-center justify-center" space="lg">
+                    <Button
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBlockColor: "black",
+                      }}
+                      onPress={() => setUpcomingPage(upcomingPage - 1)}
+                      disabled={upcomingPage === 1}
+                    >
+                      <Icon as={ChevronLeftIcon} size="xl" />
+                    </Button>
+
+                    <Button
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBlockColor: "black",
+                      }}
+                      onPress={() => setUpcomingPage(upcomingPage + 1)}
+                      disabled={
+                        upcomingPage === UpcomingMovieResponse?.total_pages
+                      }
+                    >
+                      <Icon as={ChevronRightIcon} size="xl" />
+                    </Button>
+                  </HStack>
+                </Box>
+              </HStack>
+              <HStack className="w-full overflow-x-scroll">
+                <ScrollView horizontal={true}>
+                  {upcomingMovies.map((movie) => (
+                    <MovieCard
+                      key={movie.id}
+                      movie_id={movie.id}
+                      movie_img={movie.poster_path}
+                      movie_date={movie.release_date}
+                      movie_name={movie.title}
+                      movie_popularity={movie.popularity}
+                      movie_lang={movie.original_language}
+                      movie_rating={movie.vote_average}
+                      movie_votes={movie.vote_count}
+                    />
+                  ))}
+                </ScrollView>
+              </HStack>
+            </VStack>
           </VStack>
         </VStack>
       </ScrollView>
+      <Fab
+        size="md"
+        placement="bottom right"
+        isHovered={false}
+        isDisabled={false}
+        isPressed={false}
+        className="bg-indigo-300"
+      >
+        <FabIcon as={StarIcon} />
+        <FabLabel>0 Favourites</FabLabel>
+      </Fab>
     </SafeAreaView>
   );
 }

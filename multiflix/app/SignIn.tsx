@@ -34,21 +34,20 @@ import { useRouter } from "expo-router";
 
 const LoginWithLeftBackground = () => {
   const router = useRouter();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleState = () => {
+    setShowPassword((showState) => {
+      return !showState;
+    });
+  };
   return (
     <VStack className="max-w-[440px] w-full" space="md">
       <VStack className="md:items-center" space="md">
-        <Pressable>
-          <Icon
-            as={ArrowLeftIcon}
-            className="md:hidden text-background-800"
-            size="xl"
-          />
-        </Pressable>
         <VStack>
           <Text className="md:text-center" size="3xl">
             Log in
           </Text>
-          <Text>Login to start using gluestack</Text>
+          <Text>Login to start using Multiflix</Text>
         </VStack>
       </VStack>
 
@@ -56,10 +55,10 @@ const LoginWithLeftBackground = () => {
         <VStack space="xl" className="w-full">
           <FormControl className="w-full">
             <FormControlLabel>
-              <FormControlLabelText>Email</FormControlLabelText>
+              <FormControlLabelText>User Name</FormControlLabelText>
             </FormControlLabel>
-            <Input>
-              <InputField placeholder="Enter email" />
+            <Input size="lg">
+              <InputField placeholder="Enter User Name" />
             </Input>
           </FormControl>
 
@@ -67,10 +66,10 @@ const LoginWithLeftBackground = () => {
             <FormControlLabel>
               <FormControlLabelText>Password</FormControlLabelText>
             </FormControlLabel>
-            <Input>
+            <Input size="lg">
               <InputField type="password" placeholder="Enter password" />
-              <InputSlot className="pr-3">
-                <InputIcon as={EyeIcon} />
+              <InputSlot className="pr-3" onPress={handleState}>
+                <InputIcon as={showPassword ? EyeIcon : EyeOffIcon} />
               </InputSlot>
             </Input>
           </FormControl>
@@ -93,12 +92,6 @@ const LoginWithLeftBackground = () => {
         <VStack className="w-full my-7" space="lg">
           <Button className="w-full" onPress={() => router.push("Home")}>
             <ButtonText className="font-medium">Log in</ButtonText>
-          </Button>
-          <Button variant="outline" action="secondary" className="w-full gap-1">
-            <ButtonText className="font-medium">
-              Continue with Google
-            </ButtonText>
-            <ButtonIcon as={GoogleIcon} />
           </Button>
         </VStack>
 

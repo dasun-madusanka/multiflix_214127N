@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "expo-router";
 import { Toast, ToastTitle } from "@/components/ui/toast";
 import { VStack } from "@/components/ui/vstack";
 import { HStack } from "@/components/ui/hstack";
@@ -23,15 +24,22 @@ import {
   FormControlLabel,
 } from "@/components/ui/form-control";
 import { Pressable } from "@/components/ui/pressable";
-import { Input, InputField } from "@/components/ui/input";
+import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { ChevronDownIcon } from "@/components/ui/icon";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
+import { Icon, EyeIcon, EyeOffIcon } from "@/components/ui/icon";
 import Link from "@unitools/link";
 import { ArrowLeftIcon, CheckIcon } from "@/components/ui/icon";
 import { AuthLayout } from "@/app/AuthLayout";
 
 const SignUpWithLeftBackground = () => {
+  const router = useRouter();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleState = () => {
+    setShowPassword((showState) => {
+      return !showState;
+    });
+  };
   return (
     <VStack className="max-w-[440px] w-full" space="md">
       <VStack className="md:items-center" space="md">
@@ -46,7 +54,7 @@ const SignUpWithLeftBackground = () => {
           <Text className="md:text-center" size="3xl">
             Sign up
           </Text>
-          <Text>Create an account to start using gluestack</Text>
+          <Text>Create an account to start using Miltiflix</Text>
         </VStack>
       </VStack>
 
@@ -54,10 +62,10 @@ const SignUpWithLeftBackground = () => {
         <VStack space="xl" className="w-full">
           <FormControl className="w-full">
             <FormControlLabel>
-              <FormControlLabelText>Name</FormControlLabelText>
+              <FormControlLabelText>Full Name</FormControlLabelText>
             </FormControlLabel>
-            <Input>
-              <InputField placeholder="Enter your name" />
+            <Input size="lg">
+              <InputField placeholder="Enter your full name" />
             </Input>
           </FormControl>
 
@@ -65,7 +73,7 @@ const SignUpWithLeftBackground = () => {
             <FormControlLabel>
               <FormControlLabelText>Username</FormControlLabelText>
             </FormControlLabel>
-            <Input>
+            <Input size="lg">
               <InputField placeholder="Enter a username" />
             </Input>
           </FormControl>
@@ -74,7 +82,7 @@ const SignUpWithLeftBackground = () => {
             <FormControlLabel>
               <FormControlLabelText>Email</FormControlLabelText>
             </FormControlLabel>
-            <Input>
+            <Input size="lg">
               <InputField placeholder="Enter your email" />
             </Input>
           </FormControl>
@@ -83,8 +91,11 @@ const SignUpWithLeftBackground = () => {
             <FormControlLabel>
               <FormControlLabelText>Password</FormControlLabelText>
             </FormControlLabel>
-            <Input>
+            <Input size="lg">
               <InputField type="password" placeholder="Enter your password" />
+              <InputSlot className="pr-3" onPress={handleState}>
+                <InputIcon as={showPassword ? EyeIcon : EyeOffIcon} />
+              </InputSlot>
             </Input>
           </FormControl>
 
@@ -93,7 +104,7 @@ const SignUpWithLeftBackground = () => {
               <FormControlLabelText>Gender</FormControlLabelText>
             </FormControlLabel>
             <Select>
-              <SelectTrigger variant="outline" size="md">
+              <SelectTrigger variant="outline" size="lg">
                 <SelectInput placeholder="Select option" />
                 <SelectIcon className="mr-3" as={ChevronDownIcon} />
               </SelectTrigger>
@@ -118,15 +129,7 @@ const SignUpWithLeftBackground = () => {
         </VStack>
 
         <HStack className="self-center" space="sm">
-          <Text size="md">Already have an account?</Text>
-          <Link href="/auth/login">
-            <LinkText
-              className="font-medium text-primary-700 group-hover/link:text-primary-600  group-hover/pressed:text-primary-700"
-              size="md"
-            >
-              Log in
-            </LinkText>
-          </Link>
+          <Text size="md" onPress={()=> router.push("SignIn")}>Already have an account?</Text>
         </HStack>
       </VStack>
     </VStack>
