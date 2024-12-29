@@ -32,11 +32,12 @@ export default function MovieCard({
   movie_rating,
   movie_votes,
 }: MovieCardProps) {
+    const movie_img_set = movie_img ? `https://image.tmdb.org/t/p/w500${movie_img}` : "https://static.vecteezy.com/system/resources/previews/010/973/641/non_2x/movie-poster-cinema-banner-with-popcorn-soda-clapperboard-glowing-cinema-banner-illustration-vector.jpg";
   return (
     <Card className="p-5 rounded-lg max-w-[360px] m-3">
       <Image
         source={{
-          uri: `https://image.tmdb.org/t/p/w500${movie_img}`,
+          uri: `${movie_img_set}`,
         }}
         className="mb-6 h-[240px] w-full rounded-md aspect-[263/240]"
         alt="image"

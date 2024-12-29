@@ -4,20 +4,47 @@ import { ScrollView } from "react-native";
 import { Image } from "@/components/ui/image";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
-import { ButtonText } from "@/components/ui/button";
+import { ButtonText, ButtonIcon, ButtonGroup } from "@/components/ui/button";
 import { LinkText } from "@/components/ui/link";
 import { HStack } from "@/components/ui/hstack";
 import { VStack } from "@/components/ui/vstack";
 import MovieCard from "@/components/MovieCard";
-import { Avatar, AvatarBadge, AvatarImage, AvatarFallbackText } from "@/components/ui/avatar";
-import { Movie } from "@/types/Movie";
-import { getAllMovies } from "@/apis/Movies";
+import { Heading } from "@/components/ui/heading";
+import { Box } from "@/components/ui/box";
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarImage,
+  AvatarFallbackText,
+} from "@/components/ui/avatar";
+import { Movie, MovieResponse } from "@/types/Movie";
+import {
+  getAllMovies,
+  getNewMovies,
+  getPopularMovies,
+  getUpcomingMovies,
+} from "@/apis/Movies";
+import { ChevronRightIcon, ChevronLeftIcon, Icon } from "@/components/ui/icon";
+// import { ChevronRightIcon } from "@/components/ui/icon/index.web";
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [newMovies, setNewMovies] = useState<Movie[]>([]);
+  const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
+  const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
+  const [MovieResponse, setMovieResponse] = useState<MovieResponse>();
+  const [page, setPage] = useState(1);
+
   useEffect(() => {
-    getAllMovies(1).then((movies) => {
-      setMovies(movies);
+    getAllMovies(page).then((movies) => {
+      setMovieResponse(movies);
+      setMovies(movies.results);
+    });
+  }, [page]);
+
+  useEffect(() => {
+    getNewMovies(page, "2024-12-29").then((movies) => {
+      setNewMovies(movies.results);
     });
   }, []);
 
@@ -41,30 +68,59 @@ export default function Home() {
             />
           </VStack>
           <VStack className="md:items-center md:justify-center flex-1 w-full  p-9 md:gap-10 gap-16 md:m-auto md:w-1/2 h-full">
-            <HStack className="w-full justify-between">
-              <Text size="2xl">Multiflix</Text>
-              <HStack className="space-md" space="md" style={{ alignItems: "center" }}>
-                {/* <Button>
-                  <ButtonText>Sign in</ButtonText>
-                </Button> */}
-                <Text size="xl" className="text-typography-700">
-                    Dasun
-                </Text>
-                <Avatar>
-                    <AvatarFallbackText>D</AvatarFallbackText>
-                    {/* <AvatarImage
-                        source={{
-                        uri: "https://icon-library.com/images/google-user-icon/google-user-icon-21.jpg",
-                        }}
-                    /> */}
-                    <AvatarBadge />
+            <HStack className="w-full justify-between align-center">
+              <Image
+                source={require("@/assets/images/logo.png")}
+                // className="h-20"
+                // style={{ width: "100%" }}
+              />
+              <HStack
+                className="space-md"
+                space="md"
+                style={{ alignItems: "center" }}
+              >
+                <VStack>
+                  <Heading size="sm">Dasun Madusanka</Heading>
+                  <Text size="sm">dasun7890</Text>
+                </VStack>
+                <Avatar className="bg-indigo-300 border-2 border-indigo-600">
+                  <AvatarFallbackText>D</AvatarFallbackText>
+
+                  <AvatarBadge />
                 </Avatar>
               </HStack>
             </HStack>
             <VStack className="w-full">
-              <HStack className="w-full justify-between">
-                <Text size="xl">Popular Movies</Text>
-                <LinkText>View all</LinkText>
+              <HStack
+                className="w-full justify-between align-center"
+                style={{ alignItems: "center" }}
+              >
+                <Text size="xl">All Movies</Text>
+                <Box>
+                  <HStack className="align-center justify-center" space="lg">
+                    <Button
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBlockColor: "black",
+                      }}
+                      onPress={() => setPage(page - 1)}
+                      disabled={page === 1}
+                    >
+                      <Icon as={ChevronLeftIcon} size="xl" />
+                    </Button>
+
+                    <Button
+                      style={{
+                        backgroundColor: "transparent",
+                        borderBlockColor: "black",
+                      }}
+                      onPress={() => setPage(page + 1)}
+                      disabled={page === MovieResponse?.total_pages}
+                    >
+                      <Icon as={ChevronRightIcon} size="xl" />
+                    </Button>
+                  </HStack>
+                </Box>
               </HStack>
               <HStack className="w-full overflow-x-scroll">
                 <ScrollView horizontal={true}>
@@ -91,17 +147,12 @@ export default function Home() {
             </VStack>
             <VStack className="w-full">
               <HStack className="w-full justify-between">
-                <Text size="xl">Popular Series</Text>
+                <Text size="xl">New Movies</Text>
                 <LinkText>View all</LinkText>
               </HStack>
               <HStack className="w-full overflow-x-scroll">
                 <ScrollView horizontal={true}>
-                  {/* <MovieCard />
-                  <MovieCard />
-                  <MovieCard />
-                  <MovieCard />
-                  <MovieCard /> */}
-                  {movies.map((movie) => (
+                  {newMovies.map((movie) => (
                     <MovieCard
                       key={movie.id}
                       movie_id={movie.id}

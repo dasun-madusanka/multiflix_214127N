@@ -6,7 +6,10 @@ import { View } from "react-native";
 export default function Layout() {
     return(
         <GluestackUIProvider mode="dark">
-            <Stack />
+            <Stack
+            screenOptions={{
+                headerShown: false
+              }} />
 
         </GluestackUIProvider>
         
