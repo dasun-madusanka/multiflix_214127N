@@ -92,6 +92,7 @@ const LoginWithLeftBackground = () => {
 
     if (response.error) {
       setError(response.error);
+      setLoading(false);
     } else {
       login({
         name: response.user.name,
@@ -100,6 +101,7 @@ const LoginWithLeftBackground = () => {
         email: response.user.email,
         favourites: [],
       });
+      setLoading(false);
       router.push("Home");
     }
 
@@ -178,7 +180,7 @@ const LoginWithLeftBackground = () => {
         </VStack>
 
         <VStack className="w-full my-7" space="lg">
-          <Button className="w-full" onPress={handleLogin}>
+          <Button className="w-full" onPress={handleLogin} disabled={loading}>
             <ButtonText className="font-medium">
               {loading ? "Signing in..." : "Sign in"}
             </ButtonText>

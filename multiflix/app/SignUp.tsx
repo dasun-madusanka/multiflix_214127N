@@ -59,6 +59,7 @@ const SignUpWithLeftBackground = () => {
   const [passwordInvalid, setPasswordInvalid] = React.useState(false);
   const [genderInvalid, setGenderInvalid] = React.useState(false);
   const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const validateFullName = () => {
     if (!fullName) {
@@ -133,6 +134,7 @@ const SignUpWithLeftBackground = () => {
   };
 
   const handleSignUp = async () => {
+    setLoading(true);
     if (
       !validateFullName() ||
       !validateUsername() ||
@@ -140,10 +142,12 @@ const SignUpWithLeftBackground = () => {
       !validatePassword() ||
       !validateGender()
     ) {
+      setLoading(false);
       return;
     }
     if (!fullName || !username || !email || !password || !gender) {
       setError("Please fill all the fields");
+      setLoading(false);
       return;
     }
     const user: User = {
@@ -156,8 +160,10 @@ const SignUpWithLeftBackground = () => {
     const response = await registerUser(user);
     if (response.error) {
       setError(response.error);
+      setLoading(false);
     } else {
       router.push("SignIn");
+      setLoading(false);
     }
   };
 
@@ -169,13 +175,7 @@ const SignUpWithLeftBackground = () => {
   return (
     <VStack className="max-w-[440px] w-full" space="md">
       <VStack className="md:items-center" space="md">
-        <Pressable>
-          <Icon
-            as={ArrowLeftIcon}
-            className="md:hidden text-background-800"
-            size="xl"
-          />
-        </Pressable>
+        
         <VStack>
           <Text className="md:text-center" size="3xl">
             Sign up
@@ -286,8 +286,10 @@ const SignUpWithLeftBackground = () => {
         </VStack>
 
         <VStack className="w-full my-7" space="lg">
-          <Button className="w-full" onPress={handleSignUp}>
-            <ButtonText className="font-medium">Sign up</ButtonText>
+          <Button className="w-full" onPress={handleSignUp} disabled={loading}>
+            <ButtonText className="font-medium">
+              {loading ? "Submiting..." : "Sign Up"}
+            </ButtonText>
           </Button>
         </VStack>
 
