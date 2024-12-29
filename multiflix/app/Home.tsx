@@ -12,6 +12,7 @@ import { VStack } from "@/components/ui/vstack";
 import MovieCard from "@/components/MovieCard";
 import { Heading } from "@/components/ui/heading";
 import { Box } from "@/components/ui/box";
+import { useAuth } from "@/context/AuthContext";
 import {
   Avatar,
   AvatarBadge,
@@ -26,9 +27,12 @@ import {
   getUpcomingMovies,
 } from "@/apis/Movies";
 import { ChevronRightIcon, ChevronLeftIcon, Icon, StarIcon } from "@/components/ui/icon";
+import ProfileModal from "@/components/ProfileModal";
+import { P } from "@expo/html-elements";
 // import { ChevronRightIcon } from "@/components/ui/icon/index.web";
 
 export default function Home() {
+    const { user, logout } = useAuth();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [newMovies, setNewMovies] = useState<Movie[]>([]);
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
@@ -43,6 +47,7 @@ export default function Home() {
   const [popularPage, setPopularPage] = useState(1);
   const [upcomingPage, setUpcomingPage] = useState(1);
   const [newPage, setNewPage] = useState(1);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const today = new Date();
   const date =
@@ -99,8 +104,6 @@ export default function Home() {
             <HStack className="w-full justify-between align-center">
               <Image
                 source={require("@/assets/images/logo.png")}
-                // className="h-20"
-                // style={{ width: "100%" }}
               />
               <HStack
                 className="space-md"
@@ -108,11 +111,11 @@ export default function Home() {
                 style={{ alignItems: "center" }}
               >
                 <VStack>
-                  <Heading size="sm">Dasun Madusanka</Heading>
-                  <Text size="sm">dasun7890</Text>
+                  <Heading size="sm">{user?.name}</Heading>
+                  <Text size="sm">{user?.username}</Text>
                 </VStack>
                 <Avatar className="bg-indigo-300 border-2 border-indigo-600">
-                  <AvatarFallbackText>D</AvatarFallbackText>
+                  <AvatarFallbackText onPress={()=>setModalOpen(true)}>{user?.name}</AvatarFallbackText>
 
                   <AvatarBadge />
                 </Avatar>
@@ -327,8 +330,10 @@ export default function Home() {
         className="bg-indigo-300"
       >
         <FabIcon as={StarIcon} />
-        <FabLabel>0 Favourites</FabLabel>
+        <FabLabel>{user?.favourites.length} Favourites</FabLabel>
       </Fab>
+
+      <ProfileModal modelOpen={modalOpen} setModalOpen={setModalOpen} />
     </SafeAreaView>
   );
 }
