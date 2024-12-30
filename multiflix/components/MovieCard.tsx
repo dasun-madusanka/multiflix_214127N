@@ -3,6 +3,7 @@ import { Image } from "./ui/image";
 import { Text } from "./ui/text";
 import { Heading } from "./ui/heading";
 import { Link } from "./ui/link";
+import { Button, ButtonText } from "./ui/button";
 import { HStack } from "./ui/hstack";
 import { VStack } from "./ui/vstack";
 import { LinkText } from "./ui/link";
@@ -10,6 +11,7 @@ import { Icon } from "./ui/icon";
 import { ArrowRightIcon } from "./ui/icon";
 import { ScrollView } from "react-native";
 import { Divider } from "./ui/divider";
+import { useAuth } from "@/context/AuthContext";
 
 type MovieCardProps = {
   movie_id: number;
@@ -32,7 +34,21 @@ export default function MovieCard({
   movie_rating,
   movie_votes,
 }: MovieCardProps) {
-    const movie_img_set = movie_img ? `https://image.tmdb.org/t/p/w500${movie_img}` : "https://static.vecteezy.com/system/resources/previews/010/973/641/non_2x/movie-poster-cinema-banner-with-popcorn-soda-clapperboard-glowing-cinema-banner-illustration-vector.jpg";
+  const { user, addFavourite, removeFavourite } = useAuth();
+
+  const isFavourite = user?.favourites.includes(movie_id);
+
+  const handleFavourite = () => {
+    if (isFavourite) {
+      removeFavourite(movie_id);
+    } else {
+      addFavourite(movie_id);
+    }
+  };
+
+  const movie_img_set = movie_img
+    ? `https://image.tmdb.org/t/p/w500${movie_img}`
+    : "https://static.vecteezy.com/system/resources/previews/010/973/641/non_2x/movie-poster-cinema-banner-with-popcorn-soda-clapperboard-glowing-cinema-banner-illustration-vector.jpg";
   return (
     <Card className="p-5 rounded-lg max-w-[360px] m-3">
       <Image
@@ -66,21 +82,16 @@ export default function MovieCard({
           <Text className="text-sm font-semibold">{movie_votes}</Text>
         </VStack>
       </HStack>
-      <Link href="https://gluestack.io/" isExternal>
-        <HStack className="items-center">
-          <LinkText
-            size="sm"
-            className="font-semibold text-info-600 no-underline"
-          >
-            Read Blog
-          </LinkText>
-          <Icon
-            as={ArrowRightIcon}
-            size="sm"
-            className="text-info-600 mt-0.5 ml-0.5"
-          />
-        </HStack>
-      </Link>
+
+
+      <Button
+        onPress={handleFavourite}
+        className={`mt-4 ${isFavourite ? "bg-red-500" : "bg-indigo-500"}`}
+      >
+        <ButtonText>
+          {isFavourite ? "Remove from Favourites" : "Add to Favourites"}
+        </ButtonText>
+      </Button>
     </Card>
   );
 }
